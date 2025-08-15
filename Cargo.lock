@@ -4659,7 +4659,7 @@ dependencies = [
 [[package]]
 name = "quiver"
 version = "0.1.0"
-source = "git+https://github.com/swpsco/quiver.git?rev=ca175a5e776bef661d8972e5ad88927b78622e24#ca175a5e776bef661d8972e5ad88927b78622e24"
+source = "git+https://github.com/swpsco/quiver.git?rev=f2b7fe6d3dc3b96bc94fa0d6e85dcd8a1720ee51#f2b7fe6d3dc3b96bc94fa0d6e85dcd8a1720ee51"
 dependencies = [
  "anyhow",
  "async-trait",
