@@ -20,11 +20,16 @@ use std::sync::Arc;
 use quiver::types::{Template, Submission, Target};
 use bytes::Bytes;
 
+const VERSION: &str = env!("GIT_VERSION");
+const _COMMIT: &str = env!("GIT_COMMIT");
+const COMMIT_SHORT: &str = env!("GIT_COMMIT_SHORT");
+
 #[tokio::main]
 async fn main() {
     tracer::init();
 
     let config = Config::parse();
+    info!("nockpool-miner version {} (commit: {})", VERSION, COMMIT_SHORT);
 
     if config.benchmark {
         tracing::info!("Running benchmark...");
