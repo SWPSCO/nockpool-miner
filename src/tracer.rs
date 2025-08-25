@@ -4,27 +4,26 @@
 // level-based logging.
 
 use tracing_subscriber::fmt::format::Writer;
-use tracing_subscriber::fmt::{FmtContext, FormatEvent, FormatFields};
+use tracing_subscriber::fmt::{FormatEvent, FormatFields};
 use tracing_subscriber::layer::SubscriberExt;
 use tracing_subscriber::registry::LookupSpan;
 use tracing_subscriber::util::SubscriberInitExt;
 use tracing_subscriber::{fmt, EnvFilter};
+use crate::zipkin::SpanExportLayer;
 
 use tracing::Level;
 
-pub fn init() {
-    let fmt_layer = fmt::layer().with_ansi(true).event_format(MinimalFormatter);
+pub fn init(zipkin_layer: SpanExportLayer) {
+    let filter = EnvFilter::try_from_default_env()
+        .unwrap_or_else(|_| EnvFilter::new("info"));
 
-    let filter = EnvFilter::builder()
-        .with_default_directive("info".parse().expect("default log directive is invalid"))
-        .from_env_lossy();
-
+    let fmt_layer = fmt::layer().event_format(MinimalFormatter);
     tracing_subscriber::registry()
-        .with(fmt_layer)
         .with(filter)
+        .with(fmt_layer)
+        .with(zipkin_layer)
         .init();
 }
-
 struct MinimalFormatter;
 
 impl<S, N> FormatEvent<S, N> for MinimalFormatter
@@ -34,7 +33,7 @@ where
 {
     fn format_event(
         &self,
-        ctx: &FmtContext<'_, S, N>,
+        ctx: &tracing_subscriber::fmt::FmtContext<'_, S, N>,
         mut writer: Writer<'_>,
         event: &tracing::Event<'_>,
     ) -> std::fmt::Result {

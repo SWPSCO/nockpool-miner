@@ -7,6 +7,7 @@ mod submission;
 mod auth;
 mod key_storage;
 mod key_manager;
+mod zipkin;
 
 use crate::new_job::NockPoolNewJobConsumer;
 use crate::submission::{NockPoolSubmissionProvider, NockPoolSubmissionResponseHandler};
@@ -19,19 +20,52 @@ use tracing::{error, info};
 use std::sync::Arc;
 use quiver::types::{Template, Submission, Target};
 use bytes::Bytes;
+use zipkin::{time_proof}; 
+use std::collections::HashMap;
 
 #[tokio::main]
 async fn main() {
-    tracer::init();
-
     let config = Config::parse();
+    let device_key = match resolve_mining_key(&config).await {
+        Ok(k) => k,
+        Err(e) => { tracing::error!("Failed to resolve mining key: {e}"); return; }
+    };
+
+    let collector_url = config
+        .collector_url
+        .clone()
+        .unwrap_or_else(|| "https://telemetry.nockpool.com".to_string());
+
+    // --- Gather System Info ---
+    let device_info = device::get_device_info();
+    tracing::info!(
+        "Starting miner with OS='{}', CPU='{}', RAM='{} GB'",
+        device_info.os,
+        device_info.cpu_model,
+        device_info.ram_capacity_gb
+    );
+    let mut globals = HashMap::new();
+    globals.insert("app".into(), "nockpool-miner".into());
+    globals.insert("mode".into(), if config.benchmark { "benchmark" } else { "live" }.into());
+    globals.insert("os".into(), device_info.os.clone());
+    globals.insert("cpu".into(), device_info.cpu_model.clone());
+    globals.insert("ram_gb".into(), device_info.ram_capacity_gb.to_string());
+    let zipkin_layer = zipkin::make_layer(&collector_url, "nockpool-miner", &device_key, &globals);
+    tracer::init(zipkin_layer);
 
     if config.benchmark {
-        tracing::info!("Running benchmark...");
-        if let Err(e) = miner::benchmark(config.max_threads, config.benchmark_proofs).await {
-            tracing::error!("Error running benchmark: {}", e);
+        let mut tags = HashMap::new();
+        tags.insert("mode".into(), "benchmark".into());
+        if let Some(mt) = config.max_threads {
+            tags.insert("threads".into(), mt.to_string());
         }
-        tracing::info!("Benchmark completed successfully");
+        tags.insert("proofs_per_thread".into(), config.benchmark_proofs.to_string());
+
+        let _ = time_proof("benchmark_proofs", &tags, async {
+            if let Err(e) = miner::benchmark(config.max_threads, config.benchmark_proofs).await {
+                tracing::error!("Error running benchmark: {}", e);
+            }
+        }).await;
         return;
     }
 
@@ -66,15 +100,6 @@ async fn main() {
     let submission_provider = Arc::new(NockPoolSubmissionProvider::new(submission_rx));
 
     let submission_response_handler = Arc::new(NockPoolSubmissionResponseHandler::new());
-
-    // --- Gather System Info ---
-    let device_info = device::get_device_info();
-    tracing::info!(
-        "Starting miner with OS='{}', CPU='{}', RAM='{} GB'",
-        device_info.os,
-        device_info.cpu_model,
-        device_info.ram_capacity_gb
-    );
 
     // --- Set up panic hook for quiver client ---
     let (panic_tx, mut panic_rx) = mpsc::unbounded_channel::<()>();
