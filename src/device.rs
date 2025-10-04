@@ -44,12 +44,10 @@ pub fn get_gpu_info() -> Option<String> {
     if gpu_models.is_empty() {
         None
     } else {
-        // Clean up GPU names and remove duplicates
+        // Clean up GPU names (don't remove duplicates - we want to count multiple identical GPUs)
         let mut cleaned_gpus: Vec<String> = gpu_models.into_iter()
             .map(|gpu| clean_gpu_name(&gpu))
             .filter(|gpu| !gpu.is_empty())
-            .collect::<std::collections::HashSet<_>>() // Remove duplicates
-            .into_iter()
             .collect();
 
         // Filter out generic names if we have specific ones
@@ -74,7 +72,26 @@ pub fn get_gpu_info() -> Option<String> {
         if cleaned_gpus.is_empty() {
             None
         } else {
-            Some(cleaned_gpus.join(", "))
+            // Count identical GPUs and format as "2x GPU Name" if there are duplicates
+            let mut gpu_counts: std::collections::HashMap<String, usize> = std::collections::HashMap::new();
+            for gpu in cleaned_gpus {
+                *gpu_counts.entry(gpu).or_insert(0) += 1;
+            }
+
+            let mut formatted_gpus: Vec<String> = gpu_counts.into_iter()
+                .map(|(gpu, count)| {
+                    if count > 1 {
+                        format!("{}x {}", count, gpu)
+                    } else {
+                        gpu
+                    }
+                })
+                .collect();
+
+            // Sort for consistent ordering
+            formatted_gpus.sort();
+
+            Some(formatted_gpus.join(", "))
         }
     }
 }
