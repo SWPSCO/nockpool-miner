@@ -1,7 +1,7 @@
 use clap::Parser;
 
 #[derive(Parser, Debug, Clone)]
-#[command(version, about, long_about = None)]
+#[command(author, version = env!("GIT_VERSION"), about, long_about = None)]
 pub struct Config {
     /// The secret key for authentication with the nockpool server.
     #[arg(long)]
