@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 use tokio::sync::{watch, Mutex};
-use anyhow::Result;
+use anyhow::{Result, anyhow};
 use tracing::info;
 use std::sync::Arc;
 
@@ -45,12 +45,58 @@ impl NockPoolSubmissionResponseHandler {
     pub fn new() -> Self {
         Self {}
     }
+
+    async fn handle_verification_failure(&self, response: &SubmissionResponse) -> Result<()> {
+        tracing::error!("Proof rejected by verifier - forcing reconnect to template provider");
+        tracing::error!("  Digest: {:?}", response.digest);
+        tracing::error!("  Reason: {}", response.message);
+        
+        // Return an error to force the quiver client to fail and reconnect
+        Err(anyhow!("Verification failed, forcing reconnection: {}", response.message))
+    }
+
+    async fn handle_verification_success(&self, response: &SubmissionResponse) -> Result<()> {
+        tracing::info!("Proof accepted by verifier");
+        tracing::info!("  Digest: {:?}", response.digest);
+        Ok(())
+    }
 }
 
 #[async_trait]
 impl SubmissionResponseHandler for NockPoolSubmissionResponseHandler {
     async fn handle(&self, response: SubmissionResponse) -> Result<()> {
-        info!("{:?}", response);
+        info!("Received verification response: {:?}", response);
+        
+        // Check if verification failed and take action
+        if !response.success {
+            tracing::warn!("Proof verification failed: {}", response.message);
+            
+            // Add your custom actions here when verification fails:
+            // Examples:
+            // - Log detailed failure information
+            // - Send metrics/telemetry
+            // - Adjust mining parameters
+            // - Notify external systems
+            // - Implement retry logic
+            
+            // Example actions:
+            tracing::error!("Verification failure details - Digest: {:?}, Reason: {}", 
+                response.digest, response.message);
+            
+            // You can add additional failure handling here
+            self.handle_verification_failure(&response).await?;
+        } else {
+            tracing::info!("Proof successfully verified! Digest: {:?}", response.digest);
+            
+            // Add your custom actions here when verification succeeds:
+            // Examples:
+            // - Update success metrics
+            // - Log success information
+            // - Notify monitoring systems
+            
+            self.handle_verification_success(&response).await?;
+        }
+        
         Ok(())
     }
 }
