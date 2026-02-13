@@ -216,7 +216,7 @@ checksum = "965c2d33e53cb6b267e148a4cb0760bc01f4904c1cd4bb4002a085bb016d1490"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
  "synstructure",
 ]
 
@@ -228,7 +228,7 @@ checksum = "3109e49b1e4909e9db6515a30c633684d68cdeaa252f215214cb4fa1a5bfee2c"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
  "synstructure",
 ]
 
@@ -240,7 +240,7 @@ checksum = "7b18050c2cd6fe86c3a76584ef5e0baf286d038cda203eb6223df2cc413565f7"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -316,7 +316,7 @@ checksum = "3b43422f69d8ff38f95f1b2bb76517c91589a924d1559a0e935d7c8ce0274c11"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -338,7 +338,7 @@ checksum = "c7c24de15d275a1ecfd47a380fb4d5ec9bfe0933f309ed5e705b775596a3574d"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -349,7 +349,7 @@ checksum = "e539d3fca749fcee5236ab05e93a52867dd549cc157c8cb7f99595f3cedffdb5"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -652,7 +652,7 @@ dependencies = [
  "regex",
  "rustc-hash 1.1.0",
  "shlex",
- "syn 2.0.104",
+ "syn",
  "which",
 ]
 
@@ -807,6 +807,29 @@ name = "bumpalo"
 version = "3.19.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "46c5e41b57b8bba42a04676d81cb89e9ee8e859a1a66f80a5a72e1cb76b34d43"
+
+[[package]]
+name = "bytecheck"
+version = "0.8.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0caa33a2c0edca0419d15ac723dff03f1956f7978329b1e3b5fdaaaed9d3ca8b"
+dependencies = [
+ "bytecheck_derive",
+ "ptr_meta",
+ "rancor",
+ "simdutf8",
+]
+
+[[package]]
+name = "bytecheck_derive"
+version = "0.8.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "89385e82b5d1821d2219e0b095efa2cc1f246cbf99080f3be46a1a85c0d392d9"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
 
 [[package]]
 name = "bytemuck"
@@ -975,7 +998,7 @@ dependencies = [
  "heck",
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -1174,7 +1197,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "strict",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -1310,7 +1333,7 @@ checksum = "f46882e17999c6cc590af592290432be3bce0428cb0d5f8b6715e4dc7b383eb3"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -1350,7 +1373,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8d162beedaa69905488a8da94f5ac3edb4dd4788b732fadb7bd120b2625c1976"
 dependencies = [
  "data-encoding",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -1429,7 +1452,7 @@ dependencies = [
  "convert_case 0.7.1",
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
  "unicode-xid",
 ]
 
@@ -1494,7 +1517,7 @@ checksum = "97369cbbc041bc366949bc74d34658d6cda5621039731c6310521892a3a20ae0"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -1549,7 +1572,7 @@ dependencies = [
  "proc-macro-error2",
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -1614,7 +1637,7 @@ dependencies = [
  "heck",
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -1848,7 +1871,7 @@ checksum = "162ee34ebcb7c64a8abebc059ce0fee27c2262618d7b60ed8faf72fef13c3650"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -1979,6 +2002,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "gnort"
+version = "0.2.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "aef3660ec7d99e31b3d5481d5c2ea525934a38b18ca4d5a64bf53292cf9f1446"
+dependencies = [
+ "dashmap",
+ "derive_more",
+ "dogstatsd",
+ "governor",
+ "maplit",
+ "nonzero_ext",
+ "once_cell",
+ "thiserror 2.0.12",
+]
+
+[[package]]
 name = "governor"
 version = "0.8.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2061,6 +2100,12 @@ dependencies = [
  "equivalent",
  "foldhash",
 ]
+
+[[package]]
+name = "hashbrown"
+version = "0.16.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "841d1cc9bed7f9236f321df977030373f4a4163ae1a7dbfe1a51a2c1a51d9100"
 
 [[package]]
 name = "hashlink"
@@ -2435,7 +2480,7 @@ dependencies = [
 [[package]]
 name = "ibig"
 version = "0.3.6"
-source = "git+https://github.com/swpsco/nockchain.git?rev=2b912bff818ac5081109f374e58c5db277b4bb04#2b912bff818ac5081109f374e58c5db277b4bb04"
+source = "git+https://github.com/swpsco/nockchain.git?rev=7f64fd35bb1e70048a60b8fc397416c0f81921ad#7f64fd35bb1e70048a60b8fc397416c0f81921ad"
 dependencies = [
  "cfg-if",
  "num-traits",
@@ -2446,11 +2491,11 @@ dependencies = [
 [[package]]
 name = "ibig"
 version = "0.3.6"
-source = "git+https://github.com/swpsco/nockchain.git?rev=7f64fd35bb1e70048a60b8fc397416c0f81921ad#7f64fd35bb1e70048a60b8fc397416c0f81921ad"
+source = "git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf#9eb98e9324e3101f16f38346cd5ace73d7e30adf"
 dependencies = [
  "cfg-if",
  "num-traits",
- "rand 0.8.5",
+ "rand 0.9.2",
  "static_assertions",
 ]
 
@@ -2877,7 +2922,7 @@ dependencies = [
  "proc-macro2",
  "quote",
  "regex",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -3205,7 +3250,7 @@ source = "git+https://github.com/libp2p/rust-libp2p.git?rev=da0017ee887a868e231e
 dependencies = [
  "heck",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -3232,7 +3277,7 @@ dependencies = [
  "futures-rustls",
  "libp2p-core",
  "libp2p-identity",
- "rcgen",
+ "rcgen 0.13.2",
  "ring",
  "rustls 0.23.29",
  "rustls-webpki 0.103.4",
@@ -3534,14 +3579,34 @@ dependencies = [
 ]
 
 [[package]]
-name = "murmur3"
-version = "0.5.2"
-source = "git+https://github.com/swpsco/nockchain.git?rev=2b912bff818ac5081109f374e58c5db277b4bb04#2b912bff818ac5081109f374e58c5db277b4bb04"
+name = "munge"
+version = "0.4.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "5e17401f259eba956ca16491461b6e8f72913a0a114e39736ce404410f915a0c"
+dependencies = [
+ "munge_macro",
+]
+
+[[package]]
+name = "munge_macro"
+version = "0.4.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "4568f25ccbd45ab5d5603dc34318c1ec56b117531781260002151b8530a9f931"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
+]
 
 [[package]]
 name = "murmur3"
 version = "0.5.2"
 source = "git+https://github.com/swpsco/nockchain.git?rev=7f64fd35bb1e70048a60b8fc397416c0f81921ad#7f64fd35bb1e70048a60b8fc397416c0f81921ad"
+
+[[package]]
+name = "murmur3"
+version = "0.5.2"
+source = "git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf#9eb98e9324e3101f16f38346cd5ace73d7e30adf"
 
 [[package]]
 name = "netlink-packet-core"
@@ -3642,61 +3707,6 @@ checksum = "b93853da6d84c2e3c7d730d6473e8817692dd89be387eb01b94d7f108ecb5b8c"
 [[package]]
 name = "nockapp"
 version = "0.1.0"
-source = "git+https://github.com/swpsco/nockchain.git?rev=2b912bff818ac5081109f374e58c5db277b4bb04#2b912bff818ac5081109f374e58c5db277b4bb04"
-dependencies = [
- "anyhow",
- "async-trait",
- "axum 0.8.4",
- "axum-server",
- "bincode 2.0.1",
- "bitvec",
- "blake3",
- "byteorder",
- "bytes",
- "chrono",
- "clap",
- "config",
- "dirs",
- "either",
- "futures",
- "getrandom 0.2.16",
- "gnort",
- "ibig 0.3.6 (git+https://github.com/swpsco/nockchain.git?rev=2b912bff818ac5081109f374e58c5db277b4bb04)",
- "instant-acme",
- "intmap",
- "nockvm 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=2b912bff818ac5081109f374e58c5db277b4bb04)",
- "nockvm_macros 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=2b912bff818ac5081109f374e58c5db277b4bb04)",
- "opentelemetry",
- "opentelemetry-otlp",
- "opentelemetry_sdk",
- "rand 0.8.5",
- "rcgen",
- "rustls 0.23.29",
- "rustls-pemfile 2.2.0",
- "serde",
- "serde_json",
- "signal-hook",
- "signal-hook-tokio",
- "tempfile",
- "termimad",
- "thiserror 2.0.12",
- "tokio",
- "tokio-rustls 0.26.2",
- "tokio-util",
- "tonic",
- "tower-http",
- "tracing",
- "tracing-opentelemetry",
- "tracing-subscriber",
- "tracing-test",
- "webpki-roots 0.26.11",
- "x509-parser 0.16.0",
- "yaque",
-]
-
-[[package]]
-name = "nockapp"
-version = "0.1.0"
 source = "git+https://github.com/swpsco/nockchain.git?rev=7f64fd35bb1e70048a60b8fc397416c0f81921ad#7f64fd35bb1e70048a60b8fc397416c0f81921ad"
 dependencies = [
  "anyhow",
@@ -3715,17 +3725,17 @@ dependencies = [
  "either",
  "futures",
  "getrandom 0.2.16",
- "gnort",
+ "gnort 0.1.2",
  "ibig 0.3.6 (git+https://github.com/swpsco/nockchain.git?rev=7f64fd35bb1e70048a60b8fc397416c0f81921ad)",
  "instant-acme",
  "intmap",
  "nockvm 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=7f64fd35bb1e70048a60b8fc397416c0f81921ad)",
  "nockvm_macros 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=7f64fd35bb1e70048a60b8fc397416c0f81921ad)",
- "opentelemetry",
- "opentelemetry-otlp",
- "opentelemetry_sdk",
+ "opentelemetry 0.27.1",
+ "opentelemetry-otlp 0.27.0",
+ "opentelemetry_sdk 0.27.1",
  "rand 0.8.5",
- "rcgen",
+ "rcgen 0.13.2",
  "rustls 0.23.29",
  "rustls-pemfile 2.2.0",
  "serde",
@@ -3733,20 +3743,77 @@ dependencies = [
  "signal-hook",
  "signal-hook-tokio",
  "tempfile",
- "termimad",
+ "termimad 0.31.3",
  "thiserror 2.0.12",
  "tokio",
  "tokio-rustls 0.26.2",
  "tokio-util",
- "tonic",
+ "tonic 0.12.3",
  "tower-http",
  "tracing",
- "tracing-opentelemetry",
+ "tracing-opentelemetry 0.28.0",
  "tracing-subscriber",
  "tracing-test",
  "tracing-tracy",
  "webpki-roots 0.26.11",
  "x509-parser 0.16.0",
+ "yaque",
+]
+
+[[package]]
+name = "nockapp"
+version = "0.1.0"
+source = "git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf#9eb98e9324e3101f16f38346cd5ace73d7e30adf"
+dependencies = [
+ "anyhow",
+ "async-trait",
+ "axum 0.8.4",
+ "axum-server",
+ "bincode 2.0.1",
+ "bitvec",
+ "blake3",
+ "byteorder",
+ "bytes",
+ "chrono",
+ "clap",
+ "config",
+ "dirs",
+ "either",
+ "futures",
+ "getrandom 0.3.3",
+ "gnort 0.2.0",
+ "ibig 0.3.6 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "instant-acme",
+ "intmap",
+ "nockvm 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "nockvm_macros 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "noun-serde",
+ "opentelemetry 0.30.0",
+ "opentelemetry-otlp 0.30.0",
+ "opentelemetry_sdk 0.30.0",
+ "rand 0.9.2",
+ "rcgen 0.14.7",
+ "rustls 0.23.29",
+ "rustls-pemfile 2.2.0",
+ "serde",
+ "serde_json",
+ "signal-hook",
+ "signal-hook-tokio",
+ "tempfile",
+ "termimad 0.33.0",
+ "thiserror 2.0.12",
+ "tokio",
+ "tokio-rustls 0.26.2",
+ "tokio-util",
+ "tonic 0.14.3",
+ "tower-http",
+ "tracing",
+ "tracing-opentelemetry 0.31.0",
+ "tracing-subscriber",
+ "tracing-test",
+ "tracing-tracy",
+ "webpki-roots 1.0.2",
+ "x509-parser 0.17.0",
  "yaque",
 ]
 
@@ -3776,34 +3843,7 @@ dependencies = [
  "tracing",
  "tracing-test",
  "vergen",
- "zkvm-jetpack",
-]
-
-[[package]]
-name = "nockchain-libp2p-io"
-version = "0.1.0"
-source = "git+https://github.com/swpsco/nockchain.git?rev=2b912bff818ac5081109f374e58c5db277b4bb04#2b912bff818ac5081109f374e58c5db277b4bb04"
-dependencies = [
- "bs58",
- "bytes",
- "config",
- "either",
- "equix",
- "futures",
- "gnort",
- "hickory-proto",
- "hickory-resolver",
- "ibig 0.3.6 (git+https://github.com/swpsco/nockchain.git?rev=2b912bff818ac5081109f374e58c5db277b4bb04)",
- "libp2p",
- "nockapp 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=2b912bff818ac5081109f374e58c5db277b4bb04)",
- "nockvm 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=2b912bff818ac5081109f374e58c5db277b4bb04)",
- "nockvm_macros 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=2b912bff818ac5081109f374e58c5db277b4bb04)",
- "rand 0.8.5",
- "serde",
- "serde_bytes",
- "tokio",
- "tracing",
- "void",
+ "zkvm-jetpack 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=7f64fd35bb1e70048a60b8fc397416c0f81921ad)",
 ]
 
 [[package]]
@@ -3818,7 +3858,7 @@ dependencies = [
  "either",
  "equix",
  "futures",
- "gnort",
+ "gnort 0.1.2",
  "hickory-proto",
  "hickory-resolver",
  "ibig 0.3.6 (git+https://github.com/swpsco/nockchain.git?rev=7f64fd35bb1e70048a60b8fc397416c0f81921ad)",
@@ -3835,8 +3875,62 @@ dependencies = [
 ]
 
 [[package]]
+name = "nockchain-libp2p-io"
+version = "0.1.0"
+source = "git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf#9eb98e9324e3101f16f38346cd5ace73d7e30adf"
+dependencies = [
+ "bs58",
+ "bytes",
+ "config",
+ "dashmap",
+ "either",
+ "equix",
+ "futures",
+ "gnort 0.2.0",
+ "hickory-proto",
+ "hickory-resolver",
+ "ibig 0.3.6 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "libp2p",
+ "nockapp 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "nockvm 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "nockvm_macros 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "noun-serde",
+ "rand 0.9.2",
+ "serde",
+ "serde_bytes",
+ "tokio",
+ "tracing",
+ "void",
+ "zkvm-jetpack 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+]
+
+[[package]]
+name = "nockchain-math"
+version = "0.1.0"
+source = "git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf#9eb98e9324e3101f16f38346cd5ace73d7e30adf"
+dependencies = [
+ "argon2",
+ "arrayref",
+ "bs58",
+ "bytes",
+ "either",
+ "hex-literal",
+ "ibig 0.3.6 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "nockvm 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "nockvm_macros 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "noun-serde",
+ "num-traits",
+ "once_cell",
+ "quickcheck",
+ "rkyv",
+ "serde",
+ "thiserror 2.0.12",
+ "tracing",
+]
+
+[[package]]
 name = "nockpool-miner"
-version = "0.3.2"
+version = "0.5.2"
 dependencies = [
  "anyhow",
  "async-nats",
@@ -3876,35 +3970,7 @@ dependencies = [
  "tracing-subscriber",
  "uuid",
  "x25519-dalek",
- "zkvm-jetpack",
-]
-
-[[package]]
-name = "nockvm"
-version = "0.1.0"
-source = "git+https://github.com/swpsco/nockchain.git?rev=2b912bff818ac5081109f374e58c5db277b4bb04#2b912bff818ac5081109f374e58c5db277b4bb04"
-dependencies = [
- "autotools",
- "bitvec",
- "cc",
- "either",
- "ibig 0.3.6 (git+https://github.com/swpsco/nockchain.git?rev=2b912bff818ac5081109f374e58c5db277b4bb04)",
- "intmap",
- "json",
- "lazy_static",
- "libc",
- "memmap2",
- "murmur3 0.5.2 (git+https://github.com/swpsco/nockchain.git?rev=2b912bff818ac5081109f374e58c5db277b4bb04)",
- "nockvm_crypto 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=2b912bff818ac5081109f374e58c5db277b4bb04)",
- "nockvm_macros 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=2b912bff818ac5081109f374e58c5db277b4bb04)",
- "num-derive",
- "num-traits",
- "rand 0.8.5",
- "signal-hook",
- "slotmap",
- "static_assertions",
- "thiserror 2.0.12",
- "tracing",
+ "zkvm-jetpack 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=7f64fd35bb1e70048a60b8fc397416c0f81921ad)",
 ]
 
 [[package]]
@@ -3937,18 +4003,35 @@ dependencies = [
 ]
 
 [[package]]
-name = "nockvm_crypto"
+name = "nockvm"
 version = "0.1.0"
-source = "git+https://github.com/swpsco/nockchain.git?rev=2b912bff818ac5081109f374e58c5db277b4bb04#2b912bff818ac5081109f374e58c5db277b4bb04"
+source = "git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf#9eb98e9324e3101f16f38346cd5ace73d7e30adf"
 dependencies = [
- "aes",
- "aes-siv",
- "curve25519-dalek",
- "ed25519-dalek",
- "ibig 0.3.6 (git+https://github.com/swpsco/nockchain.git?rev=2b912bff818ac5081109f374e58c5db277b4bb04)",
- "sha1",
- "sha2",
- "x25519-dalek",
+ "autotools",
+ "bincode 2.0.1",
+ "bitvec",
+ "bytes",
+ "cc",
+ "either",
+ "ibig 0.3.6 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "intmap",
+ "json",
+ "lazy_static",
+ "libc",
+ "memmap2",
+ "murmur3 0.5.2 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "nockvm_crypto 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "nockvm_macros 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "num-derive",
+ "num-traits",
+ "rand 0.9.2",
+ "serde",
+ "signal-hook",
+ "slotmap",
+ "static_assertions",
+ "thiserror 2.0.12",
+ "tracing",
+ "tracing-core",
 ]
 
 [[package]]
@@ -3967,12 +4050,18 @@ dependencies = [
 ]
 
 [[package]]
-name = "nockvm_macros"
+name = "nockvm_crypto"
 version = "0.1.0"
-source = "git+https://github.com/swpsco/nockchain.git?rev=2b912bff818ac5081109f374e58c5db277b4bb04#2b912bff818ac5081109f374e58c5db277b4bb04"
+source = "git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf#9eb98e9324e3101f16f38346cd5ace73d7e30adf"
 dependencies = [
- "quote",
- "syn 1.0.109",
+ "aes",
+ "aes-siv",
+ "curve25519-dalek",
+ "ed25519-dalek",
+ "ibig 0.3.6 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "sha1",
+ "sha2",
+ "x25519-dalek",
 ]
 
 [[package]]
@@ -3981,7 +4070,16 @@ version = "0.1.0"
 source = "git+https://github.com/swpsco/nockchain.git?rev=7f64fd35bb1e70048a60b8fc397416c0f81921ad#7f64fd35bb1e70048a60b8fc397416c0f81921ad"
 dependencies = [
  "quote",
- "syn 2.0.104",
+ "syn",
+]
+
+[[package]]
+name = "nockvm_macros"
+version = "0.1.0"
+source = "git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf#9eb98e9324e3101f16f38346cd5ace73d7e30adf"
+dependencies = [
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -4016,6 +4114,31 @@ dependencies = [
  "mio 0.8.11",
  "walkdir",
  "windows-sys 0.45.0",
+]
+
+[[package]]
+name = "noun-serde"
+version = "0.1.0"
+source = "git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf#9eb98e9324e3101f16f38346cd5ace73d7e30adf"
+dependencies = [
+ "bytes",
+ "ibig 0.3.6 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "nockvm 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "noun-serde-derive",
+ "thiserror 2.0.12",
+ "tracing",
+]
+
+[[package]]
+name = "noun-serde-derive"
+version = "0.1.0"
+source = "git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf#9eb98e9324e3101f16f38346cd5ace73d7e30adf"
+dependencies = [
+ "nockvm 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "proc-macro2",
+ "quote",
+ "syn",
+ "tracing",
 ]
 
 [[package]]
@@ -4070,7 +4193,7 @@ checksum = "ed3955f1a9c7c0c15e092f9c887db08b1fc683305fdf6eb6684f22555355e202"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -4170,6 +4293,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "opentelemetry"
+version = "0.30.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "aaf416e4cb72756655126f7dd7bb0af49c674f4c1b9903e80c009e0c37e552e6"
+dependencies = [
+ "futures-core",
+ "futures-sink",
+ "js-sys",
+ "pin-project-lite",
+ "thiserror 2.0.12",
+ "tracing",
+]
+
+[[package]]
 name = "opentelemetry-http"
 version = "0.27.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4178,7 +4315,20 @@ dependencies = [
  "async-trait",
  "bytes",
  "http 1.3.1",
- "opentelemetry",
+ "opentelemetry 0.27.1",
+ "reqwest 0.12.22",
+]
+
+[[package]]
+name = "opentelemetry-http"
+version = "0.30.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "50f6639e842a97dbea8886e3439710ae463120091e2e064518ba8e716e6ac36d"
+dependencies = [
+ "async-trait",
+ "bytes",
+ "http 1.3.1",
+ "opentelemetry 0.30.0",
  "reqwest 0.12.22",
 ]
 
@@ -4191,15 +4341,34 @@ dependencies = [
  "async-trait",
  "futures-core",
  "http 1.3.1",
- "opentelemetry",
- "opentelemetry-http",
- "opentelemetry-proto",
- "opentelemetry_sdk",
+ "opentelemetry 0.27.1",
+ "opentelemetry-http 0.27.0",
+ "opentelemetry-proto 0.27.0",
+ "opentelemetry_sdk 0.27.1",
  "prost",
  "reqwest 0.12.22",
  "thiserror 1.0.69",
  "tokio",
- "tonic",
+ "tonic 0.12.3",
+ "tracing",
+]
+
+[[package]]
+name = "opentelemetry-otlp"
+version = "0.30.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "dbee664a43e07615731afc539ca60c6d9f1a9425e25ca09c57bc36c87c55852b"
+dependencies = [
+ "http 1.3.1",
+ "opentelemetry 0.30.0",
+ "opentelemetry-http 0.30.0",
+ "opentelemetry-proto 0.30.0",
+ "opentelemetry_sdk 0.30.0",
+ "prost",
+ "reqwest 0.12.22",
+ "thiserror 2.0.12",
+ "tokio",
+ "tonic 0.13.1",
  "tracing",
 ]
 
@@ -4209,10 +4378,22 @@ version = "0.27.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a6e05acbfada5ec79023c85368af14abd0b307c015e9064d249b2a950ef459a6"
 dependencies = [
- "opentelemetry",
- "opentelemetry_sdk",
+ "opentelemetry 0.27.1",
+ "opentelemetry_sdk 0.27.1",
  "prost",
- "tonic",
+ "tonic 0.12.3",
+]
+
+[[package]]
+name = "opentelemetry-proto"
+version = "0.30.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2e046fd7660710fe5a05e8748e70d9058dc15c94ba914e7c4faa7c728f0e8ddc"
+dependencies = [
+ "opentelemetry 0.30.0",
+ "opentelemetry_sdk 0.30.0",
+ "prost",
+ "tonic 0.13.1",
 ]
 
 [[package]]
@@ -4226,7 +4407,7 @@ dependencies = [
  "futures-executor",
  "futures-util",
  "glob",
- "opentelemetry",
+ "opentelemetry 0.27.1",
  "percent-encoding",
  "rand 0.8.5",
  "serde_json",
@@ -4234,6 +4415,24 @@ dependencies = [
  "tokio",
  "tokio-stream",
  "tracing",
+]
+
+[[package]]
+name = "opentelemetry_sdk"
+version = "0.30.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "11f644aa9e5e31d11896e024305d7e3c98a88884d9f8919dbf37a9991bc47a4b"
+dependencies = [
+ "futures-channel",
+ "futures-executor",
+ "futures-util",
+ "opentelemetry 0.30.0",
+ "percent-encoding",
+ "rand 0.9.2",
+ "serde_json",
+ "thiserror 2.0.12",
+ "tokio",
+ "tokio-stream",
 ]
 
 [[package]]
@@ -4366,7 +4565,7 @@ dependencies = [
  "pest_meta",
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -4396,7 +4595,7 @@ checksum = "6e918e4ff8c4549eb882f14b3a4bc8c8bc93de829416eacf579f1207a8fbf861"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -4472,7 +4671,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ff24dfcda44452b9816fff4cd4227e1bb73ff5a2f1bc1105aa92fb8565ce44d2"
 dependencies = [
  "proc-macro2",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -4494,7 +4693,7 @@ dependencies = [
  "proc-macro-error-attr2",
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -4526,7 +4725,7 @@ checksum = "440f724eba9f6996b75d63681b0a92b06947f1457076d503a4d2e2c8f56442b8"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -4549,7 +4748,27 @@ dependencies = [
  "itertools 0.14.0",
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
+]
+
+[[package]]
+name = "ptr_meta"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0b9a0cf95a1196af61d4f1cbdab967179516d9a4a4312af1f31948f8f6224a79"
+dependencies = [
+ "ptr_meta_derive",
+]
+
+[[package]]
+name = "ptr_meta_derive"
+version = "0.3.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7347867d0a7e1208d93b46767be83e2b8f978c3dad35f775ac8d8847551d6fe1"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -4660,14 +4879,14 @@ dependencies = [
 [[package]]
 name = "quiver"
 version = "0.1.0"
-source = "git+https://github.com/swpsco/quiver.git?rev=ca175a5e776bef661d8972e5ad88927b78622e24#ca175a5e776bef661d8972e5ad88927b78622e24"
+source = "git+https://github.com/swpsco/quiver.git?rev=fa2d46144aa7cdef36695aeb35f789a13a748048#fa2d46144aa7cdef36695aeb35f789a13a748048"
 dependencies = [
  "anyhow",
  "async-trait",
  "bincode 1.3.3",
  "bytes",
- "nockapp 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=2b912bff818ac5081109f374e58c5db277b4bb04)",
- "nockchain-libp2p-io 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=2b912bff818ac5081109f374e58c5db277b4bb04)",
+ "nockapp 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "nockchain-libp2p-io 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
  "quinn",
  "rustls 0.23.29",
  "serde",
@@ -4696,6 +4915,15 @@ name = "radium"
 version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "dc33ff2d4973d518d823d61aa239014831e521c75da58e3df4840d3f47749d09"
+
+[[package]]
+name = "rancor"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a063ea72381527c2a0561da9c80000ef822bdd7c3241b1cc1b12100e3df081ee"
+dependencies = [
+ "ptr_meta",
+]
 
 [[package]]
 name = "rand"
@@ -4799,6 +5027,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "rcgen"
+version = "0.14.7"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "10b99e0098aa4082912d4c649628623db6aba77335e4f4569ff5083a6448b32e"
+dependencies = [
+ "pem",
+ "ring",
+ "rustls-pki-types",
+ "time",
+ "x509-parser 0.18.1",
+ "yasna",
+]
+
+[[package]]
 name = "redox_syscall"
 version = "0.5.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -4872,6 +5114,15 @@ name = "regex-syntax"
 version = "0.8.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2b15c43186be67a4fd63bee50d0303afffcef381492ebe2c5d87f324e1b8815c"
+
+[[package]]
+name = "rend"
+version = "0.5.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "cadadef317c2f20755a64d7fdc48f9e7178ee6b0e1f7fce33fa60f1d68a276e6"
+dependencies = [
+ "bytecheck",
+]
 
 [[package]]
 name = "reqwest"
@@ -4975,6 +5226,36 @@ dependencies = [
  "libc",
  "untrusted",
  "windows-sys 0.52.0",
+]
+
+[[package]]
+name = "rkyv"
+version = "0.8.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "1a30e631b7f4a03dee9056b8ef6982e8ba371dd5bedb74d3ec86df4499132c70"
+dependencies = [
+ "bytecheck",
+ "bytes",
+ "hashbrown 0.16.1",
+ "indexmap 2.10.0",
+ "munge",
+ "ptr_meta",
+ "rancor",
+ "rend",
+ "rkyv_derive",
+ "tinyvec",
+ "uuid",
+]
+
+[[package]]
+name = "rkyv_derive"
+version = "0.8.15"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8100bb34c0a1d0f907143db3149e6b4eea3c33b9ee8b189720168e818303986f"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -5382,7 +5663,7 @@ checksum = "5b0276cf7f2c73365f7157c8123c21cd9a50fbbd844757af28ca1f5925fc2a00"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -5424,7 +5705,7 @@ checksum = "175ee3e80ae9982737ca543e96133087cbd9a485eecc3bc4de9c1a37b47ea59c"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -5550,6 +5831,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "simdutf8"
+version = "0.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e3a9fe34e3e7a50316060351f37187a3f546bce95496156754b601a5fa71b76e"
+
+[[package]]
 name = "siphasher"
 version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5645,7 +5932,16 @@ version = "0.26.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8fec0f0aef304996cf250b31b5a10dee7980c85da9d759361292b8bca5a18f06"
 dependencies = [
- "strum_macros",
+ "strum_macros 0.26.4",
+]
+
+[[package]]
+name = "strum"
+version = "0.27.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "af23d6f6c1a224baef9d3f61e287d2761385a5b88fdab4eb4c6f11aeb54c4bcf"
+dependencies = [
+ "strum_macros 0.27.2",
 ]
 
 [[package]]
@@ -5658,7 +5954,19 @@ dependencies = [
  "proc-macro2",
  "quote",
  "rustversion",
- "syn 2.0.104",
+ "syn",
+]
+
+[[package]]
+name = "strum_macros"
+version = "0.27.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7695ce3845ea4b33927c055a39dc438a45b059f7c1b3d91d38d10355fb8cbca7"
+dependencies = [
+ "heck",
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]
@@ -5666,17 +5974,6 @@ name = "subtle"
 version = "2.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "13c2bddecc57b384dee18652358fb23172facb8a2c51ccc10d74c157bdea3292"
-
-[[package]]
-name = "syn"
-version = "1.0.109"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "72b64191b275b66ffe2469e8af2c1cfe3bafa67b529ead792a6d0160888b4237"
-dependencies = [
- "proc-macro2",
- "quote",
- "unicode-ident",
-]
 
 [[package]]
 name = "syn"
@@ -5712,7 +6009,7 @@ checksum = "728a70f3dbaf5bab7f0c4b1ac8d7ae5ea60a4b5549c8a5914361c99147a709d2"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -5851,6 +6148,22 @@ dependencies = [
 ]
 
 [[package]]
+name = "termimad"
+version = "0.33.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "b23646cdde4c2e9d6f2621424751b48653e5755f50163b2ff5ce3b32ebf17104"
+dependencies = [
+ "coolor",
+ "crokey",
+ "crossbeam",
+ "lazy-regex",
+ "minimad",
+ "serde",
+ "thiserror 2.0.12",
+ "unicode-width",
+]
+
+[[package]]
 name = "thiserror"
 version = "1.0.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5876,7 +6189,7 @@ checksum = "4fee6c4efc90059e10f81e6d42c60a18f76588c3d74cb83a0b242a2b6c7504c1"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -5887,7 +6200,7 @@ checksum = "7f7cf42b4507d8ea322120659672cf1b9dbb93f8f2d4ecfd6e51350ff5b17a1d"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -5983,6 +6296,7 @@ dependencies = [
  "slab",
  "socket2 0.5.10",
  "tokio-macros",
+ "tracing",
  "windows-sys 0.52.0",
 ]
 
@@ -5994,7 +6308,7 @@ checksum = "6e06d43f1345a3bcd39f6a56dbb7dcab2ba47e68e8ac134855e7e2bdbaf8cab8"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -6126,6 +6440,63 @@ dependencies = [
 ]
 
 [[package]]
+name = "tonic"
+version = "0.13.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7e581ba15a835f4d9ea06c55ab1bd4dce26fc53752c69a04aac00703bfb49ba9"
+dependencies = [
+ "async-trait",
+ "base64 0.22.1",
+ "bytes",
+ "http 1.3.1",
+ "http-body 1.0.1",
+ "http-body-util",
+ "hyper 1.6.0",
+ "hyper-timeout",
+ "hyper-util",
+ "percent-encoding",
+ "pin-project",
+ "prost",
+ "tokio",
+ "tokio-stream",
+ "tower 0.5.2",
+ "tower-layer",
+ "tower-service",
+ "tracing",
+]
+
+[[package]]
+name = "tonic"
+version = "0.14.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "a286e33f82f8a1ee2df63f4fa35c0becf4a85a0cb03091a15fd7bf0b402dc94a"
+dependencies = [
+ "async-trait",
+ "axum 0.8.4",
+ "base64 0.22.1",
+ "bytes",
+ "h2 0.4.11",
+ "http 1.3.1",
+ "http-body 1.0.1",
+ "http-body-util",
+ "hyper 1.6.0",
+ "hyper-timeout",
+ "hyper-util",
+ "percent-encoding",
+ "pin-project",
+ "socket2 0.6.0",
+ "sync_wrapper 1.0.2",
+ "tokio",
+ "tokio-rustls 0.26.2",
+ "tokio-stream",
+ "tower 0.5.2",
+ "tower-layer",
+ "tower-service",
+ "tracing",
+ "webpki-roots 1.0.2",
+]
+
+[[package]]
 name = "tower"
 version = "0.4.13"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -6153,9 +6524,12 @@ checksum = "d039ad9159c98b70ecfd540b2573b97f7f52c3e8d9f8ad57a24b916a536975f9"
 dependencies = [
  "futures-core",
  "futures-util",
+ "indexmap 2.10.0",
  "pin-project-lite",
+ "slab",
  "sync_wrapper 1.0.2",
  "tokio",
+ "tokio-util",
  "tower-layer",
  "tower-service",
  "tracing",
@@ -6221,7 +6595,7 @@ checksum = "81383ab64e72a7a8b8e13130c49e3dab29def6d0c7d76a03087b3cf71c5c6903"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -6253,8 +6627,26 @@ checksum = "97a971f6058498b5c0f1affa23e7ea202057a7301dbff68e968b2d578bcbd053"
 dependencies = [
  "js-sys",
  "once_cell",
- "opentelemetry",
- "opentelemetry_sdk",
+ "opentelemetry 0.27.1",
+ "opentelemetry_sdk 0.27.1",
+ "smallvec",
+ "tracing",
+ "tracing-core",
+ "tracing-log",
+ "tracing-subscriber",
+ "web-time",
+]
+
+[[package]]
+name = "tracing-opentelemetry"
+version = "0.31.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ddcf5959f39507d0d04d6413119c04f33b623f4f951ebcbdddddfad2d0623a9c"
+dependencies = [
+ "js-sys",
+ "once_cell",
+ "opentelemetry 0.30.0",
+ "opentelemetry_sdk 0.30.0",
  "smallvec",
  "tracing",
  "tracing-core",
@@ -6299,7 +6691,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "04659ddb06c87d233c566112c1c9c5b9e98256d9af50ec3bc9c8327f873a7568"
 dependencies = [
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -6499,7 +6891,7 @@ checksum = "d674d135b4a8c1d7e813e2f8d1c9a58308aee4a680323066025e53132218bd91"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -6564,7 +6956,7 @@ dependencies = [
  "log",
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
  "wasm-bindgen-shared",
 ]
 
@@ -6599,7 +6991,7 @@ checksum = "8ae87ea40c9f689fc23f209965b6fb8a99ad69aeeb0231408be24920604395de"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
  "wasm-bindgen-backend",
  "wasm-bindgen-shared",
 ]
@@ -6849,7 +7241,7 @@ checksum = "9107ddc059d5b6fbfbffdfa7a7fe3e22a226def0b2608f72e9d552763d3e1ad7"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -6860,7 +7252,7 @@ checksum = "a47fddd13af08290e67f4acabf4b459f647552718f683a7b415d290ac744a836"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -6871,7 +7263,7 @@ checksum = "29bee4b38ea3cde66011baa44dba677c432a78593e202392d1e9070cf2a7fca7"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -6882,7 +7274,7 @@ checksum = "bd9211b69f8dcdfa817bfd14bf1c97c9188afa36f4750130fcdf3f400eca9fa8"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -7314,6 +7706,24 @@ dependencies = [
 ]
 
 [[package]]
+name = "x509-parser"
+version = "0.18.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d43b0f71ce057da06bc0851b23ee24f3f86190b07203dd8f567d0b706a185202"
+dependencies = [
+ "asn1-rs 0.7.1",
+ "data-encoding",
+ "der-parser 10.0.0",
+ "lazy_static",
+ "nom",
+ "oid-registry 0.8.1",
+ "ring",
+ "rusticata-macros",
+ "thiserror 2.0.12",
+ "time",
+]
+
+[[package]]
 name = "xml-rs"
 version = "0.8.27"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -7383,7 +7793,7 @@ checksum = "38da3c9736e16c5d3c8c597a9aaa5d1fa565d0532ae05e27c24aa62fb32c0ab6"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
  "synstructure",
 ]
 
@@ -7404,7 +7814,7 @@ checksum = "9ecf5b4cc5364572d7f4c329661bcc82724222973f2cab6f050a4e5c22f75181"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -7424,7 +7834,7 @@ checksum = "d71e5d6e06ab090c67b5e44993ec16b72dcbaabc526db883a360057678b48502"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
  "synstructure",
 ]
 
@@ -7445,7 +7855,7 @@ checksum = "ce36e65b0d2999d2aafac989fb249189a141aee1f53c612c1f37d72631959f69"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -7478,7 +7888,7 @@ checksum = "5b96237efa0c878c64bd89c436f661be4e46b2f3eff1ebb976f7ef2321d2f58f"
 dependencies = [
  "proc-macro2",
  "quote",
- "syn 2.0.104",
+ "syn",
 ]
 
 [[package]]
@@ -7499,6 +7909,31 @@ dependencies = [
  "num-traits",
  "quickcheck",
  "smallvec",
- "strum",
+ "strum 0.26.3",
+ "tracing",
+]
+
+[[package]]
+name = "zkvm-jetpack"
+version = "0.1.0"
+source = "git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf#9eb98e9324e3101f16f38346cd5ace73d7e30adf"
+dependencies = [
+ "argon2",
+ "bitvec",
+ "bs58",
+ "bytes",
+ "either",
+ "hex-literal",
+ "ibig 0.3.6 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "nockchain-math",
+ "nockvm 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "nockvm_macros 0.1.0 (git+https://github.com/swpsco/nockchain.git?rev=9eb98e9324e3101f16f38346cd5ace73d7e30adf)",
+ "noun-serde",
+ "num-traits",
+ "once_cell",
+ "quickcheck",
+ "rayon",
+ "smallvec",
+ "strum 0.27.2",
  "tracing",
 ]

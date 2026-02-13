@@ -87,7 +87,7 @@ target/release/nockpool-miner --key nockpool_yourdevicekeyhere123
 |---|---|---|---|
 | `--account-token` | `NOCKPOOL_ACCOUNT_TOKEN` | - | Account token for generating mining tokens (recommended). |
 | `--key` | `KEY` | - | Direct device key for authentication. |
-| `--api-url` | `NOCKPOOL_API_URL` | `https://nockpool.com` | Base URL for NockPool API (for development). |
+| `--api-url` | `NOCKPOOL_API_URL` | `https://nockpool.com` | Base URL for NockPool token management API (for development). |
 | `--max-threads` | `MAX_THREADS` | (all available threads - 2) | Set the maximum number of threads to use for mining. |
 | `--server-address` | `SERVER_ADDRESS` | `quiver.nockpool.com:27016` | The `ip:port` of the nockpool server. |
 | `--client-address` | `CLIENT_ADDRESS` | `0.0.0.0:27017` | The `ip:port` of the quiver client. |

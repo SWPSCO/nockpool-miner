@@ -1,48 +1,52 @@
+use std::env;
+use std::fs;
+use std::time::Duration;
+
 use anyhow::Result;
-use reqwest::Client;
-use serde::Serialize;
-use std::{time::{Duration, Instant}, fs, env};
-use tokio::time::{interval, sleep};
-use tracing::{error, info, warn};
-use sha2::{Sha256, Digest};
+use async_trait::async_trait;
+use chrono::Utc;
+use quiver::telemetry::{TelemetryData, TelemetryProvider};
+use sha2::{Digest, Sha256};
+use tokio::sync::Mutex;
+use tokio::time::{interval_at, Instant, Interval, MissedTickBehavior};
 
 use crate::device::get_device_info_with_proof_rate;
+use crate::miner::get_current_mining_threads;
 
-#[derive(Debug, Serialize)]
-struct TelemetryData {
-    device_os: String,
-    device_cpu: String,
-    device_ram_capacity_gb: u64,
-    device_proof_rate_per_sec: f64,
-    zkvm_jetpack_hash: Option<String>,  // Now contains binary hash (includes embedded zkvm_jetpack)
-    miner_version: String,
-    gpu_info: Option<String>,
-}
-
-pub struct TelemetryClient {
-    client: Client,
-    api_key: String,
-    api_base_url: String,
-    start_time: Instant,
+/// Quiver-native telemetry provider used by the miner.
+///
+/// Scheduling policy intentionally matches legacy behavior:
+/// - first sample after 60 seconds,
+/// - subsequent samples every 5 minutes.
+#[derive(Debug)]
+pub struct NockPoolTelemetryProvider {
+    interval: Mutex<Interval>,
     binary_hash: Option<String>,
     gpu_info: Option<String>,
     miner_version: String,
 }
 
-impl TelemetryClient {
-    pub fn new(api_key: String, api_base_url: String) -> Self {
+impl NockPoolTelemetryProvider {
+    pub fn new() -> Self {
+        let mut interval = interval_at(
+            Instant::now() + Duration::from_secs(60),
+            Duration::from_secs(300),
+        );
+        // Skip missed ticks so a temporarily stalled runtime does not emit a burst.
+        interval.set_missed_tick_behavior(MissedTickBehavior::Skip);
+
         Self {
-            client: Client::new(),
-            api_key,
-            api_base_url,
-            start_time: Instant::now(),
+            interval: Mutex::new(interval),
             binary_hash: Self::get_binary_hash(),
             gpu_info: crate::device::get_gpu_info(),
             miner_version: env!("CARGO_PKG_VERSION").to_string(),
         }
     }
 
-    /// Calculate SHA-256 hash of the current binary (contains embedded zkvm_jetpack)
+    /// Calculate SHA-256 hash of the current miner binary.
+    ///
+    /// The binary includes embedded zkvm artifacts, so this is equivalent to the
+    /// legacy telemetry hash semantics.
     fn get_binary_hash() -> Option<String> {
         if let Ok(exe_path) = env::current_exe() {
             if let Ok(binary_bytes) = fs::read(&exe_path) {
@@ -54,11 +58,20 @@ impl TelemetryClient {
         }
         None
     }
+}
 
-    pub async fn send_telemetry(&self) -> Result<()> {
+#[async_trait]
+impl TelemetryProvider for NockPoolTelemetryProvider {
+    async fn next_telemetry(&self) -> Result<TelemetryData> {
+        // Quiver's client transport asks for the "next" sample. We block until
+        // the configured telemetry schedule reaches its next tick.
+        let mut interval = self.interval.lock().await;
+        interval.tick().await;
+        drop(interval);
+
         let (device_info, proof_rate) = get_device_info_with_proof_rate();
 
-        let telemetry = TelemetryData {
+        Ok(TelemetryData {
             device_os: device_info.os,
             device_cpu: device_info.cpu_model,
             device_ram_capacity_gb: device_info.ram_capacity_gb,
@@ -66,43 +79,8 @@ impl TelemetryClient {
             zkvm_jetpack_hash: self.binary_hash.clone(),
             miner_version: self.miner_version.clone(),
             gpu_info: self.gpu_info.clone(),
-        };
-
-        let api_url = format!("{}/api/v1/telemetry", self.api_base_url);
-        
-        let response = self
-            .client
-            .post(&api_url)
-            .header("Authorization", format!("Bearer {}", self.api_key))
-            .header("Content-Type", "application/json")
-            .json(&telemetry)
-            .timeout(Duration::from_secs(30))
-            .send()
-            .await?;
-
-        if response.status().is_success() {
-            info!("Telemetry sent successfully: {:.4} proofs/sec", proof_rate);
-        } else {
-            let status = response.status();
-            let error_text = response.text().await?;
-            warn!("Failed to send telemetry ({}): {}", status, error_text);
-        }
-
-        Ok(())
-    }
-
-    pub async fn start_telemetry_loop(&self) -> Result<()> {
-        sleep(Duration::from_secs(60)).await;
-        let mut interval = interval(Duration::from_secs(300)); // Send telemetry every 5 minutes
-        
-        loop {
-            interval.tick().await;
-            
-            if let Err(e) = self.send_telemetry().await {
-                error!("Error sending telemetry: {}", e);
-                // Don't break the loop on error, just wait and try again
-                sleep(Duration::from_secs(10)).await;
-            }
-        }
+            num_threads: get_current_mining_threads(),
+            sent_at_unix_ms: Utc::now().timestamp_millis(),
+        })
     }
 }
