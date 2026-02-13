@@ -1,27 +1,27 @@
-mod tracer;
-mod new_job;
+mod auth;
 mod config;
 mod device;
-mod miner;
-mod submission;
-mod auth;
-mod key_storage;
-mod key_manager;
-mod telemetry;
 mod hot_loader;
 mod jam_loader;
+mod key_manager;
+mod key_storage;
+mod miner;
+mod new_job;
+mod submission;
+mod telemetry;
+mod tracer;
 
-use crate::new_job::NockPoolNewJobConsumer;
-use crate::submission::{NockPoolSubmissionProvider, NockPoolSubmissionResponseHandler};
 use crate::config::Config;
 use crate::key_manager::{resolve_mining_key, KeyManager};
+use crate::new_job::NockPoolNewJobConsumer;
+use crate::submission::{NockPoolSubmissionProvider, NockPoolSubmissionResponseHandler};
 
-use clap::Parser;
-use tokio::sync::{watch, mpsc};
-use tracing::{error, info};
-use std::sync::Arc;
-use quiver::types::{Template, Submission, Target};
 use bytes::Bytes;
+use clap::Parser;
+use quiver::types::{Submission, Target, Template};
+use std::sync::Arc;
+use tokio::sync::{mpsc, watch};
+use tracing::{error, info};
 
 #[tokio::main]
 async fn main() {
@@ -41,17 +41,15 @@ async fn main() {
     if config.clear_key {
         tracing::info!("Clearing stored mining key...");
         match KeyManager::new() {
-            Ok(key_manager) => {
-                match key_manager.clear_stored_key() {
-                    Ok(()) => {
-                        tracing::info!("Stored mining key cleared successfully");
-                        tracing::info!("Key was stored at: {}", key_manager.get_key_storage_path());
-                    }
-                    Err(e) => {
-                        tracing::error!("Failed to clear stored key: {}", e);
-                    }
+            Ok(key_manager) => match key_manager.clear_stored_key() {
+                Ok(()) => {
+                    tracing::info!("Stored mining key cleared successfully");
+                    tracing::info!("Key was stored at: {}", key_manager.get_key_storage_path());
                 }
-            }
+                Err(e) => {
+                    tracing::error!("Failed to clear stored key: {}", e);
+                }
+            },
             Err(e) => {
                 tracing::error!("Failed to initialize key manager: {}", e);
             }
@@ -60,11 +58,18 @@ async fn main() {
     }
 
     // --- Template Provider ---
-    let (template_tx, template_rx) = watch::channel(Template::new(Bytes::new(), Bytes::new(), Bytes::new(), Bytes::new(), Bytes::new()));
+    let (template_tx, template_rx) = watch::channel(Template::new(
+        Bytes::new(),
+        Bytes::new(),
+        Bytes::new(),
+        Bytes::new(),
+        Bytes::new(),
+    ));
     let new_job_consumer = Arc::new(NockPoolNewJobConsumer::new(template_tx));
 
     // --- Submission Provider ---
-    let initial_submission = Submission::new(Target::Pool, Bytes::new(), Bytes::new(), Bytes::new());
+    let initial_submission =
+        Submission::new(Target::Pool, Bytes::new(), Bytes::new(), Bytes::new());
     let (submission_tx, submission_rx) = watch::channel(initial_submission);
     let submission_provider = Arc::new(NockPoolSubmissionProvider::new(submission_rx));
 
@@ -85,23 +90,35 @@ async fn main() {
 
     // --- Set up panic hook for quiver client ---
     let (panic_tx, mut panic_rx) = mpsc::unbounded_channel::<()>();
-    
+
     std::panic::set_hook(Box::new(move |panic_info| {
-        let payload = panic_info.payload().downcast_ref::<&str>()
+        let payload = panic_info
+            .payload()
+            .downcast_ref::<&str>()
             .unwrap_or(&"Unknown panic");
-        
+
         // Check if this is a quiver-related panic
-        if payload.contains("failed to open submission stream") || 
-           payload.contains("TimedOut") ||
-           panic_info.location().map_or(false, |l| l.file().contains("quiver")) {
+        if payload.contains("failed to open submission stream")
+            || payload.contains("TimedOut")
+            || panic_info
+                .location()
+                .map_or(false, |l| l.file().contains("quiver"))
+        {
             error!("Quiver client panic detected: {}", payload);
             let _ = panic_tx.send(());
         }
-        
+
         // Print the panic info (preserving normal panic behavior)
-        eprintln!("thread '{}' panicked at {}:",
-                 std::thread::current().name().unwrap_or("<unnamed>"),
-                 panic_info.location().map_or("unknown location".to_string(), |l| format!("{}:{}", l.file(), l.line()))
+        eprintln!(
+            "thread '{}' panicked at {}:",
+            std::thread::current().name().unwrap_or("<unnamed>"),
+            panic_info
+                .location()
+                .map_or("unknown location".to_string(), |l| format!(
+                    "{}:{}",
+                    l.file(),
+                    l.line()
+                ))
         );
         eprintln!("{}", payload);
     }));
@@ -117,29 +134,24 @@ async fn main() {
     let server_address = config.server_address.clone();
     let client_address = config.client_address.clone();
     let insecure = config.insecure.clone();
-    
-    // --- Start telemetry client ---
-    let telemetry_client = telemetry::TelemetryClient::new(
-        key.clone(), 
-        config.api_url.clone()
-    );
-    
-    tokio::spawn(async move {
-        if let Err(e) = telemetry_client.start_telemetry_loop().await {
-            tracing::error!("Telemetry client failed: {}", e);
-        }
-    });
-    
+
+    // --- Quiver-native telemetry provider ---
+    //
+    // Telemetry is now transported on the authenticated quiver connection, so
+    // it shares the same auth lifecycle as mining traffic and avoids separate
+    // HTTP token checks/races.
+    let telemetry_provider = Arc::new(telemetry::NockPoolTelemetryProvider::new());
+
     // 24-hour restart timer
     tokio::spawn(async move {
         tokio::time::sleep(tokio::time::Duration::from_secs(24 * 60 * 60)).await;
         println!("restart-miner-now");
     });
-    
+
     tokio::spawn(async move {
         let mut backoff_ms = 100_u64;
         let max_backoff_ms = 30_000_u64;
-    
+
         loop {
             // Start the quiver client
             let mut client_handle = tokio::spawn({
@@ -150,9 +162,10 @@ async fn main() {
                 let new_job_consumer = new_job_consumer.clone();
                 let submission_provider = submission_provider.clone();
                 let submission_response_handler = submission_response_handler.clone();
-                
+                let telemetry_provider = telemetry_provider.clone();
+
                 async move {
-                    quiver::client::run(
+                    quiver::client::run_with_telemetry(
                         insecure,
                         server_address,
                         client_address,
@@ -160,8 +173,10 @@ async fn main() {
                         device_info,
                         new_job_consumer,
                         submission_provider,
-                        submission_response_handler
-                    ).await
+                        submission_response_handler,
+                        Some(telemetry_provider),
+                    )
+                    .await
                 }
             });
 
@@ -184,21 +199,27 @@ async fn main() {
                 }
                 Some(Ok(Err(e))) => {
                     error!("Client connection failed: {}", e);
-                    
+
                     info!("Sleeping for {}ms before reconnecting", backoff_ms);
                     tokio::time::sleep(tokio::time::Duration::from_millis(backoff_ms)).await;
                     backoff_ms = (backoff_ms * 2).min(max_backoff_ms);
                 }
                 Some(Err(e)) => {
                     error!("Client task failed: {}", e);
-                    
-                    info!("Sleeping for {}ms before reconnecting after task failure", backoff_ms);
+
+                    info!(
+                        "Sleeping for {}ms before reconnecting after task failure",
+                        backoff_ms
+                    );
                     tokio::time::sleep(tokio::time::Duration::from_millis(backoff_ms)).await;
                     backoff_ms = (backoff_ms * 2).min(max_backoff_ms);
                 }
                 None => {
                     // Panic was detected
-                    info!("Sleeping for {}ms before reconnecting after panic", backoff_ms);
+                    info!(
+                        "Sleeping for {}ms before reconnecting after panic",
+                        backoff_ms
+                    );
                     tokio::time::sleep(tokio::time::Duration::from_millis(backoff_ms)).await;
                     backoff_ms = (backoff_ms * 2).min(max_backoff_ms);
                 }
@@ -210,4 +231,4 @@ async fn main() {
     if let Err(e) = miner::start(config, template_rx, submission_tx).await {
         error!("Error running miner: {}", e);
     }
-} 
+}

@@ -1,29 +1,29 @@
 use crate::config::Config;
 use crate::hot_loader::HotLibrary;
 
-use nockvm::jets::hot::HotEntry;
-use quiver::types::{Template, Submission, Target};
 use kernels::miner::KERNEL;
+use nockvm::jets::hot::HotEntry;
+use quiver::types::{Submission, Target, Template};
 
-use sysinfo::System;
-use tokio::sync::{Mutex, watch};
 use anyhow::Result;
-use tracing::{info, warn, error};
-use rand::Rng;
 use bytes::Bytes;
+use rand::Rng;
 use std::collections::VecDeque;
-use std::time::{Instant, Duration};
+use std::time::{Duration, Instant};
+use sysinfo::System;
+use tokio::sync::{watch, Mutex};
+use tracing::{error, info, warn};
 
-use nockapp::save::SaveableCheckpoint;
-use nockapp::utils::NOCK_STACK_SIZE_TINY;
 use nockapp::kernel::form::SerfThread;
 use nockapp::noun::slab::NounSlab;
 use nockapp::noun::AtomExt;
-use nockapp::NounExt;
+use nockapp::save::SaveableCheckpoint;
+use nockapp::utils::NOCK_STACK_SIZE_TINY;
 use nockapp::wire::{WireRepr, WireTag};
+use nockapp::NounExt;
 
-use nockvm::noun::{Atom, D, T};
 use nockvm::interpreter::NockCancelToken;
+use nockvm::noun::{Atom, D, T};
 
 use zkvm_jetpack::form::PRIME;
 
@@ -94,7 +94,9 @@ impl ProofRateTracker {
 
 // Global proof rate tracker for access across the application
 use std::sync::Arc;
-static GLOBAL_PROOF_RATE_TRACKER: std::sync::OnceLock<Arc<Mutex<ProofRateTracker>>> = std::sync::OnceLock::new();
+static GLOBAL_PROOF_RATE_TRACKER: std::sync::OnceLock<Arc<Mutex<ProofRateTracker>>> =
+    std::sync::OnceLock::new();
+static GLOBAL_MINING_THREADS: std::sync::OnceLock<u32> = std::sync::OnceLock::new();
 
 pub fn get_current_proof_rate() -> f64 {
     if let Some(tracker) = GLOBAL_PROOF_RATE_TRACKER.get() {
@@ -103,6 +105,11 @@ pub fn get_current_proof_rate() -> f64 {
         }
     }
     0.0
+}
+
+/// Return the active mining thread count once the miner has been initialized.
+pub fn get_current_mining_threads() -> Option<u32> {
+    GLOBAL_MINING_THREADS.get().copied()
 }
 
 static PROOF_INCREMENT: std::sync::OnceLock<u32> = std::sync::OnceLock::new();
@@ -139,7 +146,10 @@ pub async fn start(
     if config.no_gpu {
         info!("GPU mining disabled by --no-gpu flag, using CPU mode (1x proof rate)");
     } else if cfg!(feature = "gpu") {
-        info!("GPU build detected, using GPU proof rate multiplier ({}x)", proof_increment);
+        info!(
+            "GPU build detected, using GPU proof rate multiplier ({}x)",
+            proof_increment
+        );
     } else {
         info!("CPU build detected, using CPU mode (1x proof rate)");
     }
@@ -148,7 +158,10 @@ pub async fn start(
         let logical_cores = sys.cpus().len() as u32;
         let total_ram_gb = sys.total_memory() / (1024 * 1024 * 1024);
         let ram_based_threads = (total_ram_gb as f64 / RAM_PER_THREAD_GB).floor() as u32;
-        let calculated_threads = logical_cores.saturating_sub(2).min(ram_based_threads).max(1);
+        let calculated_threads = logical_cores
+            .saturating_sub(2)
+            .min(ram_based_threads)
+            .max(1);
         if let Some(max_threads) = config.max_threads {
             max_threads.min(calculated_threads) as u64
         } else {
@@ -156,6 +169,9 @@ pub async fn start(
         }
     };
     info!("mining with {} threads", num_threads);
+    // Expose effective thread count to telemetry so quiver telemetry parity
+    // matches what we previously reported through the HTTP endpoint.
+    let _ = GLOBAL_MINING_THREADS.set(num_threads as u32);
 
     let mut mining_attempts = tokio::task::JoinSet::<(
         SerfThread<SaveableCheckpoint>,
@@ -200,7 +216,7 @@ pub async fn start(
     let mining_data: Mutex<Option<Template>> = Mutex::new(None);
     let mut cancel_tokens: Vec<NockCancelToken> = Vec::<NockCancelToken>::new();
     let proof_rate_tracker = Arc::new(Mutex::new(ProofRateTracker::new()));
-    
+
     // Initialize global tracker
     let _ = GLOBAL_PROOF_RATE_TRACKER.set(proof_rate_tracker.clone());
 
@@ -215,7 +231,8 @@ pub async fn start(
                 let mut tracker = proof_rate_tracker_clone.lock().await;
                 let current_rate = tracker.get_proof_rate();
                 // Only show proof rate after first 5 minutes
-                if current_rate > 0.0 && start_time.elapsed() >= std::time::Duration::from_secs(300) {
+                if current_rate > 0.0 && start_time.elapsed() >= std::time::Duration::from_secs(300)
+                {
                     info!("Current mining rate: {:.4} proofs/sec", current_rate);
                 }
             }
@@ -329,7 +346,7 @@ pub async fn start(
                             let proof = proof_slab.jam();
 
                             let submission = Submission::new(target_type.clone(), commit, digest, proof);
-                            
+
                             // Update proof rate tracker
                             {
                                 let mut tracker = proof_rate_tracker.lock().await;
@@ -342,7 +359,7 @@ pub async fn start(
                                     current_rate
                                 );
                             }
-                            
+
                             if let Err(e) = submission_tx.send(submission) {
                                 error!(%id, error = ?e, "failed to send submission");
                             }
@@ -421,7 +438,7 @@ pub async fn start(
         nonce=noun-digest:tip5
         network-target=bignum:bignum
         pool-target=bignum:bignum
-        pow-len=@        
+        pow-len=@
 */
 async fn mine(
     serf: SerfThread<SaveableCheckpoint>,
@@ -496,22 +513,28 @@ async fn mine(
         }
     };
     let pow_len_atom = Atom::from_bytes(&mut slab, (&template_ref.pow_len.clone()).into());
-    let noun = T(&mut slab, &[
-        D(tas!(b"template")),
-        version_atom.as_noun(),
-        commit,
-        nonce,
-        network_target,
-        pool_target,
-        pow_len_atom.as_noun(),
-    ]);
+    let noun = T(
+        &mut slab,
+        &[
+            D(tas!(b"template")),
+            version_atom.as_noun(),
+            commit,
+            nonce,
+            network_target,
+            pool_target,
+            pow_len_atom.as_noun(),
+        ],
+    );
 
     slab.set_root(noun);
 
     let wire = WireRepr::new("miner", 1, vec![WireTag::String("candidate".to_string())]);
     mining_attempts.spawn(async move {
         info!("starting mining attempt on thread={id}");
-        let result = serf.poke(wire.clone(), slab.clone()).await.map_err(|e| anyhow::anyhow!(e));
+        let result = serf
+            .poke(wire.clone(), slab.clone())
+            .await
+            .map_err(|e| anyhow::anyhow!(e));
         (serf, id, result)
     });
 }
@@ -544,30 +567,35 @@ pub async fn benchmark(max_threads: Option<u32>, benchmark_proofs: u32) -> Resul
     let test_jets_str = std::env::var("NOCK_TEST_JETS").unwrap_or_default();
     let test_jets = nockapp::kernel::boot::parse_test_jets(test_jets_str.as_str());
 
-    let version = hex::decode("0200000000000000").map_err(|e| anyhow::anyhow!("Failed to decode version: {e}"))?;
+    let version = hex::decode("0200000000000000")
+        .map_err(|e| anyhow::anyhow!("Failed to decode version: {e}"))?;
     let commit = hex::decode("017ee86437eac9dbae690081199671e25cb54ce700ff8cdb259db500063b409e2aa64f968ec7ed801e75db735d82443707").map_err(|e| anyhow::anyhow!("Failed to decode commit: {e}"))?;
     let network_target = hex::decode("81177307ec6aacb01ef04b58dbf601823db967ef80ed5256e50304ab9031bb015f1c808d1d2058623e470ce8cdf54174c07f08c49a068e8f02").map_err(|e| anyhow::anyhow!("Failed to decode network target: {e}"))?;
     let pool_target = hex::decode("81177307ec6aacb01ef04b58dbf601823db967ef80ed5256e50304ab9031bb015f1c808d1d2058623e470ce8cdf54174c07f08c49a068e8f02").map_err(|e| anyhow::anyhow!("Failed to decode pool target: {e}"))?;
-    let pow_len = hex::decode("4000000000000000").map_err(|e| anyhow::anyhow!("Failed to decode pow len: {e}"))?;
+    let pow_len = hex::decode("4000000000000000")
+        .map_err(|e| anyhow::anyhow!("Failed to decode pow len: {e}"))?;
 
-    let mining_data: Mutex<Option<Template>> = Mutex::new(Some(
-        Template::new(
-            Bytes::from(version),
-            Bytes::from(commit),
-            Bytes::from(network_target),
-            Bytes::from(pool_target),
-            Bytes::from(pow_len),
-        )
-    ));
+    let mining_data: Mutex<Option<Template>> = Mutex::new(Some(Template::new(
+        Bytes::from(version),
+        Bytes::from(commit),
+        Bytes::from(network_target),
+        Bytes::from(pool_target),
+        Bytes::from(pow_len),
+    )));
 
     let num_threads = max_threads.unwrap_or(1);
-    info!("Running benchmark with {} threads, {} proofs per thread", num_threads, benchmark_proofs);
+    info!(
+        "Running benchmark with {} threads, {} proofs per thread",
+        num_threads, benchmark_proofs
+    );
 
-    let mut benchmark_tasks = tokio::task::JoinSet::<(u64, Result<tokio::time::Duration, anyhow::Error>)>::new();
+    let mut benchmark_tasks =
+        tokio::task::JoinSet::<(u64, Result<tokio::time::Duration, anyhow::Error>)>::new();
     let kernel_bytes = Vec::from(KERNEL);
     info!("Using embedded kernel");
     // Initialize threads first, like the mining code does
-    let mut init_tasks = tokio::task::JoinSet::<(u32, Result<SerfThread<SaveableCheckpoint>, anyhow::Error>)>::new();
+    let mut init_tasks =
+        tokio::task::JoinSet::<(u32, Result<SerfThread<SaveableCheckpoint>, anyhow::Error>)>::new();
     for thread_id in 0..num_threads {
         let kernel = kernel_bytes.clone();
         let hot_state = hot_state.clone();
@@ -589,7 +617,7 @@ pub async fn benchmark(max_threads: Option<u32>, benchmark_proofs: u32) -> Resul
 
     // Start timing the entire benchmark
     let benchmark_start = tokio::time::Instant::now();
-    
+
     // Now spawn benchmark tasks with initialized serf threads
     while let Some(res) = init_tasks.join_next().await {
         match res {
@@ -600,16 +628,23 @@ pub async fn benchmark(max_threads: Option<u32>, benchmark_proofs: u32) -> Resul
                     let local_mining_data = Mutex::new(template);
                     let mut proof_times = Vec::new();
                     let mut current_serf = serf;
-                    
+
                     for proof_num in 0..benchmark_proofs {
                         let mut mining_attempts = tokio::task::JoinSet::<(
                             SerfThread<SaveableCheckpoint>,
                             u64,
                             Result<NounSlab>,
                         )>::new();
-                        
+
                         let start = tokio::time::Instant::now();
-                        let _ = mine(current_serf, local_mining_data.lock().await, &mut mining_attempts, None, thread_id as u64).await;
+                        let _ = mine(
+                            current_serf,
+                            local_mining_data.lock().await,
+                            &mut mining_attempts,
+                            None,
+                            thread_id as u64,
+                        )
+                        .await;
 
                         // Get the serf back from the mining attempt
                         loop {
@@ -623,10 +658,15 @@ pub async fn benchmark(max_threads: Option<u32>, benchmark_proofs: u32) -> Resul
                             }
                         }
                         let elapsed = start.elapsed();
-                        info!("Thread {} generated proof {} in {:?}", thread_id, proof_num + 1, elapsed);
+                        info!(
+                            "Thread {} generated proof {} in {:?}",
+                            thread_id,
+                            proof_num + 1,
+                            elapsed
+                        );
                         proof_times.push(elapsed);
                     }
-                    
+
                     let total_time: tokio::time::Duration = proof_times.iter().sum();
                     (thread_id as u64, Ok(total_time))
                 });
@@ -681,14 +721,23 @@ pub async fn benchmark(max_threads: Option<u32>, benchmark_proofs: u32) -> Resul
         info!("  Threads: {}", num_threads);
         info!("  Proofs per thread: {}", benchmark_proofs);
         info!("  Total proofs: {}", total_proofs);
-        info!("  Average time per thread (all proofs): {:?}", average_time_per_thread);
+        info!(
+            "  Average time per thread (all proofs): {:?}",
+            average_time_per_thread
+        );
         info!("  Min thread time: {:?}", min_time);
         info!("  Max thread time: {:?}", max_time);
-        info!("  Total time across all threads: {:?}", total_time_all_threads);
-        info!("  Total benchmark time (wall clock): {:?}", total_benchmark_time);
+        info!(
+            "  Total time across all threads: {:?}",
+            total_time_all_threads
+        );
+        info!(
+            "  Total benchmark time (wall clock): {:?}",
+            total_benchmark_time
+        );
     } else {
         warn!("No proofs were generated during benchmark");
     }
-    
+
     return Ok(());
 }

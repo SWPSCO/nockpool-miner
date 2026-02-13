@@ -32,7 +32,7 @@ axum = { version = "0.8.4" }
 bytes = { version = "1.10.1" }
 hyper = { version = "0.14", features = ["full"] }
 rustls = "0.23"
-quiver = { git = "https://github.com/swpsco/quiver.git", rev = "629366bd292d14d6ee43026e3107e7cf934f4f9c" }
+quiver = { git = "https://github.com/swpsco/quiver.git", rev = "fa2d46144aa7cdef36695aeb35f789a13a748048" }
 reqwest = { version = "0.11", default-features = false, features = [
     "json",
     "rustls-tls",
